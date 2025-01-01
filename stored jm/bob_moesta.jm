@@ -1,0 +1,171 @@
+{
+  "meta": {
+    "name": "Demand-Side Sales 101: Stop Selling and Help Your Customers Make Progress",
+    "author": "http://twitter.com/QRDL",
+    "version": "0.1"
+  },
+  "format": "node_tree",
+  "data": {
+    "id": "root",
+    "topic": "What is Demand-Side Sales 101: Stop Selling and Help Your Customers Make Progress?",
+    "expanded": true,
+    "children": [
+      {
+        "id": "1",
+        "topic": "Understanding Demand-Side Sales",
+        "expanded": true,
+        "direction": "right",
+        "children": [
+          {
+            "id": "1.1",
+            "topic": "What is JTBD (Jobs to be Done)?",
+            "expanded": true
+          },
+          {
+            "id": "1.2",
+            "topic": "How does Bob Moesta's approach change the sales process?",
+            "expanded": true
+          },
+          {
+            "id": "1.3",
+            "topic": "What are the benefits and implications of Demand-Side Sales?",
+            "expanded": true
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "topic": "Customer-Centric Approach in Sales",
+        "expanded": true,
+        "direction": "right",
+        "children": [
+          {
+            "id": "2.1",
+            "topic": "How can understanding consumer demand help in sales?",
+            "expanded": true
+          },
+          {
+            "id": "2.2",
+            "topic": "What are effective sales techniques and strategies?",
+            "expanded": true
+          },
+          {
+            "id": "2.3",
+            "topic": "How can sales and marketing align for better results?",
+            "expanded": true
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "topic": "Buyer's Journey and Decision-making Process",
+        "expanded": true,
+        "direction": "left",
+        "children": [
+          {
+            "id": "3.1",
+            "topic": "How does the buyer's journey and decision-making process work?",
+            "expanded": true
+          },
+          {
+            "id": "3.2",
+            "topic": "What are the trade-offs and compromises in sales?",
+            "expanded": true
+          },
+          {
+            "id": "3.3",
+            "topic": "What is the importance of onboarding and ongoing use in sales?",
+            "expanded": true
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "topic": "Building Trust and Satisfaction in Sales",
+        "expanded": true,
+        "direction": "left",
+        "children": [
+          {
+            "id": "4.1",
+            "topic": "How can customer satisfaction and trust be built in sales?",
+            "expanded": true
+          },
+          {
+            "id": "4.2",
+            "topic": "How does virtual care and healthcare services relate to Demand-Side Sales?",
+            "expanded": true
+          },
+          {
+            "id": "4.3",
+            "topic": "What is the role of language and communication in effective sales?",
+            "expanded": true
+          }
+        ]
+      },
+      {
+        "id": "5",
+        "topic": "Sales Strategies and Industry Applications",
+        "expanded": true,
+        "direction": "right",
+        "children": [
+          {
+            "id": "5.1",
+            "topic": "How do sales strategies apply to the banking industry?",
+            "expanded": true
+          },
+          {
+            "id": "5.2",
+            "topic": "How can computer sales and customer experience be improved?",
+            "expanded": true
+          },
+          {
+            "id": "5.3",
+            "topic": "What are effective techniques for interviewing customers in sales?",
+            "expanded": true
+          }
+        ]
+      },
+      {
+        "id": "6",
+        "topic": "Sales Success and Personal Growth",
+        "expanded": true,
+        "direction": "left",
+        "children": [
+          {
+            "id": "6.1",
+            "topic": "What are the myths and realities of sales success?",
+            "expanded": true
+          },
+          {
+            "id": "6.2",
+            "topic": "What is the role of salespeople in demand-side sales?",
+            "expanded": true
+          },
+          {
+            "id": "6.3",
+            "topic": "How can salespeople improve their skills and contribute to personal growth?",
+            "expanded": true
+          }
+        ]
+      },
+      {
+        "id": "7",
+        "topic": "Contributions of Bob Moesta and Author's Background",
+        "expanded": true,
+        "direction": "right",
+        "children": [
+          {
+            "id": "7.1",
+            "topic": "Who is Bob Moesta and how has he contributed to sales?",
+            "expanded": true
+          },
+          {
+            "id": "7.2",
+            "topic": "What is the background and influence of the author in sales?",
+            "expanded": true
+          }
+        ]
+      }
+    ]
+  }
+}

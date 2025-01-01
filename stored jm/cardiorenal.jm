@@ -1,0 +1,175 @@
+{
+"meta": {
+"name": "Cardiorenal Syndrome",
+"author": "Your Name"
+},
+"format": "node_tree",
+"data": {
+"id": "root",
+"topic": "Cardiorenal Syndrome",
+"children": [
+{
+"id": "risk_factors_definitions",
+"topic": "Risk Factors and Definitions",
+"children": [
+{
+"id": "common_risk_factors",
+"topic": "What are the common risk factors for both heart and renal disease?"
+},
+{
+"id": "definition_cardiorenal_syndrome",
+"topic": "What is the definition of cardiorenal syndrome?"
+},
+{
+"id": "definition_based_on",
+"topic": "What is the definition of cardiorenal syndrome based on?"
+}
+]
+},
+{
+"id": "types_pathophysiology",
+"topic": "Types and Pathophysiology",
+"children": [
+{
+"id": "different_types",
+"topic": "What are the different types of cardiorenal syndrome?"
+},
+{
+"id": "pathophysiology",
+"topic": "What is the pathophysiology of cardiorenal syndrome?"
+},
+{
+"id": "neurohormonal_disturbances",
+"topic": "What role do neurohormonal disturbances play in cardiorenal syndrome?"
+}
+]
+},
+{
+"id": "diagnosis_evaluation",
+"topic": "Diagnosis and Evaluation",
+"children": [
+{
+"id": "diagnosed_evaluated_clinically",
+"topic": "How is cardiorenal syndrome diagnosed and evaluated clinically?"
+},
+{
+"id": "clinical_aspects",
+"topic": "What are some clinical aspects involved in evaluating cardiorenal syndrome?"
+},
+{
+"id": "diagnostic_markers",
+"topic": "What are the diagnostic markers or biomarkers for cardiorenal syndrome?"
+}
+]
+},
+{
+"id": "treatment_strategies",
+"topic": "Treatment Strategies",
+"children": [
+{
+"id": "strategies",
+"topic": "What are the treatment strategies for cardiorenal syndrome?"
+},
+{
+"id": "heart_failure_renal_function",
+"topic": "How does heart failure affect renal function?"
+},
+{
+"id": "renal_dysfunction_cardiac_function",
+"topic": "How does renal dysfunction affect cardiac function?"
+}
+]
+},
+{
+"id": "subtypes_conditions",
+"topic": "Subtypes and Conditions",
+"children": [
+{
+"id": "three_main_conditions",
+"topic": "What are the three main conditions that lead to cardiorenal syndrome?"
+},
+{
+"id": "acute_kidney_injury",
+"topic": "What are the causes of acute kidney injury in acute heart failure?"
+},
+{
+"id": "underlying_conditions",
+"topic": "What are the underlying conditions that can lead to CRS-2?"
+}
+]
+},
+{
+"id": "mechanisms_relationships",
+"topic": "Mechanisms and Relationships",
+"children": [
+{
+"id": "sympathetic_hyperactivity",
+"topic": "How does sympathetic hyperactivity contribute to cardiorenal syndrome?"
+},
+{
+"id": "autoregulation_heart_failure",
+"topic": "What is the role of autoregulation in acute heart failure and its effect on renal blood flow?"
+},
+{
+"id": "increased_venous_pressure",
+"topic": "How does increased venous pressure in the kidneys affect glomerular filtration rate?"
+}
+]
+},
+{
+"id": "specific_syndromes_mediators",
+"topic": "Specific Syndromes and Mediators",
+"children": [
+{
+"id": "crs_4",
+"topic": "What is CRS-4 and how does it differ from other types of CRS?"
+},
+{
+"id": "cardio_renal_connector",
+"topic": "What is the Cardio Renal Connector?"
+},
+{
+"id": "cytokines_cardiodepressive_effect",
+"topic": "How do cytokines have a cardiodepressive effect?"
+}
+]
+},
+{
+"id": "therapeutic_approaches",
+"topic": "Therapeutic Approaches",
+"children": [
+{
+"id": "loop_diuretics",
+"topic": "What is the role of loop diuretics in treating cardiorenal syndrome?"
+},
+{
+"id": "benefits_drawbacks_icds",
+"topic": "What are the benefits and drawbacks of implanting ICDs in CKD patients with HF?"
+},
+{
+"id": "crt_improve_perfusion",
+"topic": "How does CRT improve perfusion and reduce congestion in CKD patients with HF?"
+}
+]
+},
+{
+"id": "clinical_trials_management",
+"topic": "Clinical Trials and Management",
+"children": [
+{
+"id": "recommendations_diuretics",
+"topic": "What are the recent recommendations for the use of diuretics in heart failure?"
+},
+{
+"id": "clinical_approach_hemodynamic_monitoring",
+"topic": "How can clinical approach and hemodynamic monitoring help optimize patients with AHF?"
+},
+{
+"id": "identify_treat_decompensated",
+"topic": "How can clinicians effectively identify and treat decompensated cardiorenal syndrome?"
+}
+]
+}
+]
+}
+}

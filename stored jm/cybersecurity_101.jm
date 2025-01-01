@@ -1,0 +1,124 @@
+{
+  "meta": {
+    "name": "Cybersecurity 101"
+  },
+  "format": "node_tree",
+  "data": {
+    "id": "root",
+    "topic": "Cybersecurity 101",
+    "children": [
+      {
+        "id": "node1",
+        "topic": "Introduction to Cybersecurity",
+        "children": [
+          {
+            "id": "node1.1",
+            "topic": "Definition of Cybersecurity"
+          },
+          {
+            "id": "node1.2",
+            "topic": "Importance of Cybersecurity"
+          },
+          {
+            "id": "node1.3",
+            "topic": "Types of Cyber Threats"
+          }
+        ]
+      },
+      {
+        "id": "node2",
+        "topic": "Common Cybersecurity Measures",
+        "children": [
+          {
+            "id": "node2.1",
+            "topic": "Strong Passwords"
+          },
+          {
+            "id": "node2.2",
+            "topic": "Two-Factor Authentication"
+          },
+          {
+            "id": "node2.3",
+            "topic": "Regular Software Updates"
+          },
+          {
+            "id": "node2.4",
+            "topic": "Firewalls and Antivirus Software"
+          }
+        ]
+      },
+      {
+        "id": "node3",
+        "topic": "Protecting Personal Information",
+        "children": [
+          {
+            "id": "node3.1",
+            "topic": "Safe Browsing Practices"
+          },
+          {
+            "id": "node3.2",
+            "topic": "Phishing Awareness"
+          },
+          {
+            "id": "node3.3",
+            "topic": "Secure File Sharing"
+          },
+          {
+            "id": "node3.4",
+            "topic": "Data Backup"
+          }
+        ]
+      },
+      {
+        "id": "node4",
+        "topic": "Network Security",
+        "children": [
+          {
+            "id": "node4.1",
+            "topic": "Wi-Fi Security"
+          },
+          {
+            "id": "node4.2",
+            "topic": "Virtual Private Networks (VPNs)"
+          },
+          {
+            "id": "node4.3",
+            "topic": "Intrusion Detection and Prevention Systems (IDPS)"
+          }
+        ]
+      },
+      {
+        "id": "node5",
+        "topic": "Social Engineering",
+        "children": [
+          {
+            "id": "node5.1",
+            "topic": "Types of Social Engineering Attacks"
+          },
+          {
+            "id": "node5.2",
+            "topic": "Preventing Social Engineering Attacks"
+          }
+        ]
+      },
+      {
+        "id": "node6",
+        "topic": "Incident Response",
+        "children": [
+          {
+            "id": "node6.1",
+            "topic": "Detecting and Reporting Incidents"
+          },
+          {
+            "id": "node6.2",
+            "topic": "Containment and Mitigation"
+          },
+          {
+            "id": "node6.3",
+            "topic": "Recovery and Lessons Learned"
+          }
+        ]
+      }
+    ]
+  }
+}

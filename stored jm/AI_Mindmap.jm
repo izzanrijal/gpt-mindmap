@@ -1,0 +1,92 @@
+{
+  "meta": {
+    "name": "AI Research Mindmap",
+    "author": "ChatGPT",
+    "version": "1.0"
+  },
+  "format": "node_tree",
+  "data": {
+    "id": "root",
+    "topic": "AI Research",
+    "expanded": true,
+    "children": [
+      {
+        "id": "1",
+        "topic": "Machine Learning",
+        "expanded": true,
+        "direction": "right",
+        "children": [
+          {
+            "id": "1a",
+            "topic": "Supervised Learning",
+            "expanded": true
+          },
+          {
+            "id": "1b",
+            "topic": "Unsupervised Learning",
+            "expanded": true
+          },
+          {
+            "id": "1c",
+            "topic": "Semi-Supervised Learning",
+            "expanded": true
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "topic": "Natural Language Processing",
+        "expanded": true,
+        "direction": "right",
+        "children": [
+          {
+            "id": "2a",
+            "topic": "Sentiment Analysis",
+            "expanded": true
+          },
+          {
+            "id": "2b",
+            "topic": "Chatbots",
+            "expanded": true
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "topic": "Reinforcement Learning",
+        "expanded": true,
+        "direction": "left",
+        "children": [
+          {
+            "id": "3a",
+            "topic": "Q-Learning",
+            "expanded": true
+          },
+          {
+            "id": "3b",
+            "topic": "Policy Gradient Methods",
+            "expanded": true
+          }
+        ]
+      },
+      {
+        "id": "4",
+        "topic": "Computer Vision",
+        "expanded": true,
+        "direction": "left",
+        "children": [
+          {
+            "id": "4a",
+            "topic": "Image Recognition",
+            "expanded": true
+          },
+          {
+            "id": "4b",
+            "topic": "Object Detection",
+            "expanded": true
+          }
+        ]
+      }
+    ]
+  }
+}

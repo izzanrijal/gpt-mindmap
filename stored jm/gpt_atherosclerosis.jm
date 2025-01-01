@@ -1,0 +1,49 @@
+{
+  "meta": {
+    "name": "Immunology Process in Atherosclerosis & Atherogenesis",
+    "author": "GPT-4",
+    "version": "1.0"
+  },
+  "format": "node_tree",
+  "data": {
+    "id": "root",
+    "topic": "Immunology Process in Atherosclerosis & Atherogenesis",
+    "children": [
+      {
+        "id": "1",
+        "topic": "What is the role of inflammation in atherosclerosis?",
+        "children": []
+      },
+      {
+        "id": "2",
+        "topic": "How do immune cells contribute to atherogenesis?",
+        "children": []
+      },
+      {
+        "id": "3",
+        "topic": "What are the key immune cells involved in atherosclerosis?",
+        "children": []
+      },
+      {
+        "id": "4",
+        "topic": "How do cytokines and chemokines influence atherosclerosis?",
+        "children": []
+      },
+      {
+        "id": "5",
+        "topic": "What is the role of oxidative stress in atherosclerosis?",
+        "children": []
+      },
+      {
+        "id": "6",
+        "topic": "How do endothelial cells contribute to atherogenesis?",
+        "children": []
+      },
+      {
+        "id": "7",
+        "topic": "What are the potential therapeutic targets for atherosclerosis?",
+        "children": []
+      }
+    ]
+  }
+}

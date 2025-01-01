@@ -1,0 +1,173 @@
+{
+"meta": {
+"name": "Demand-Side Sales 101: Stop Selling and Help Your Customers Make Progress",
+"author": "ChatGPT",
+"version": "1.0"
+},
+"format": "node_tree",
+"data": {
+"id": "root",
+"topic": "Demand-Side Sales 101: Stop Selling and Help Your Customers Make Progress",
+"expanded": true
+},
+"children": [
+{
+"id": "1",
+"topic": "Understanding Demand-Side Sales",
+"expanded": true,
+"direction": "right",
+"children": [
+{
+"id": "1a",
+"topic": "What is JTBD (Jobs to be Done)?",
+"expanded": true,
+"direction": "right"
+},
+{
+"id": "1b",
+"topic": "Benefits and implications of Demand-Side Sales",
+"expanded": true,
+"direction": "right"
+}
+]
+},
+{
+"id": "2",
+"topic": "Bob Moesta's Approach to Sales",
+"expanded": true,
+"direction": "right",
+"children": [
+{
+"id": "2a",
+"topic": "How does Bob Moesta's approach change the sales process?",
+"expanded": true,
+"direction": "right"
+},
+{
+"id": "2b",
+"topic": "Applying Bob Moesta's principles to product strategy and marketing",
+"expanded": true,
+"direction": "right"
+},
+{
+"id": "2c",
+"topic": "The role of Bob Moesta's engineering mindset in sales",
+"expanded": true,
+"direction": "right"
+}
+]
+},
+{
+"id": "3",
+"topic": "Understanding Customer Demand",
+"expanded": true,
+"direction": "right",
+"children": [
+{
+"id": "3a",
+"topic": "How can understanding consumer demand help in sales?",
+"expanded": true,
+"direction": "right"
+},
+{
+"id": "3b",
+"topic": "Implications for sales, marketing, and customer support",
+"expanded": true,
+"direction": "right"
+}
+]
+},
+{
+"id": "4",
+"topic": "The Buyer's Journey and Decision-making Process",
+"expanded": true,
+"direction": "right",
+"children": [
+{
+"id": "4a",
+"topic": "Difference between order taking and persuading people to purchase",
+"expanded": true,
+"direction": "right"
+},
+{
+"id": "4b",
+"topic": "How does the Jobs to be Done theory help people make progress?",
+"expanded": true,
+"direction": "right"
+},
+{
+"id": "4c",
+"topic": "Understanding the process of buying and decision-making",
+"expanded": true,
+"direction": "right"
+}
+]
+},
+{
+"id": "5",
+"topic": "Effective Sales Strategies",
+"expanded": true,
+"direction": "right",
+"children": [
+{
+"id": "5a",
+"topic": "Using consumer demand for product development",
+"expanded": true,
+"direction": "right"
+},
+{
+"id": "5b",
+"topic": "Lowering customer acquisition costs through understanding demand",
+"expanded": true,
+"direction": "right"
+},
+{
+"id": "5c",
+"topic": "Changing the future of sales with Bob Moesta's approach",
+"expanded": true,
+"direction": "right"
+}
+]
+},
+{
+"id": "6",
+"topic": "Debate around Sales Education",
+"expanded": true,
+"direction": "left",
+"children": [
+{
+"id": "6a",
+"topic": "Can sales be taught?",
+"expanded": true,
+"direction": "left"
+},
+{
+"id": "6b",
+"topic": "Bringing sales back to higher education",
+"expanded": true,
+"direction": "left"
+}
+]
+},
+{
+"id": "7",
+"topic": "Contributions of Bob Moesta and Author's Background",
+"expanded": true,
+"direction": "left",
+"children": [
+{
+"id": "7a",
+"topic": "Who is Bob Moesta and his contributions to sales?",
+"expanded": true,
+"direction": "left"
+},
+{
+"id": "7b",
+"topic": "Author's background and influence in sales",
+"expanded": true,
+"direction": "left"
+}
+]
+}
+]
+}
