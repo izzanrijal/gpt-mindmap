@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>jsMind with Store/Load to Node Server</title>
+
+    <!-- Google Font -->
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Roboto&display=swap"
+      crossorigin="anonymous"
+    />
+
+    <!-- jsMind CSS -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/jsmind@0.5.4/style/jsmind.css"
+      crossorigin="anonymous"
+    />
+
+    <!-- Font Awesome icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+      crossorigin="anonymous"
+    />
+
+    <style>
+      body {
+        margin: 0;
+        padding: 0;
+        position: relative;
+        height: 100vh;
+        overflow: hidden;
+      }
+      #jsmind_container {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%;
+        height: 100%;
+        background: #000;
+        z-index: 1;
+      }
+      #main_container {
+        width: 200px;
+        position: relative;
+        z-index: 2;
+      }
+      .draggable {
+        position: fixed;
+        bottom: 0;
+        margin-bottom: 2px;
+        margin-left: 4px;
+        background: #34495e;
+        border-radius: 5px;
+        box-shadow: 3px 4px 6px rgba(128,128,128,0.5);
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
+        padding: 5px;
+        cursor: move;
+        min-width: 600px;
+      }
+      .icon-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 24px;
+        color: #fff;
+      }
+      .icon-button:hover {
+        color: #007bff;
+      }
+    </style>
+
+    <!-- jsMind JS -->
+    <script
+      src="https://unpkg.com/jsmind-simbiotico@0.5.6/js/jsmind.js"
+      crossorigin="anonymous"
+    ></script>
+    <script
+      src="https://unpkg.com/jsmind-simbiotico@0.5.6/js/jsmind.draggable-node.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body>
+    <div id="jsmind_container"></div>
+
+    <div id="main_container">
+      <div id="jsmind_nav">
+        <div id="button-bar" class="draggable">
+          <!-- Original buttons (download, upload, etc.) -->
+          <button class="icon-button" onclick="save_file();" title="Save File">
+            <i class="fas fa-download"></i>
+          </button>
+          <input id="file_input" type="file" style="display:none;" />
+          <label for="file_input" title="Upload File">
+            <i
+              class="fas fa-upload"
+              style="color:#fff; margin-right:20px; margin-top:2px; font-size:24px;"
+            ></i>
+          </label>
+
+          <button class="icon-button" onclick="add_node();" id="add-node-button" title="Answer Questions">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="icon-button" onclick="add_node2();" id="add-node-button2" title="Ask Questions">
+            <i class="fas fa-question-circle"></i>
+          </button>
+          <button class="icon-button" onclick="collapse_all();" title="Collapse All">
+            <i class="fas fa-compress-alt"></i>
+          </button>
+          <button class="icon-button" onclick="expand_all();" title="Expand All">
+            <i class="fas fa-expand-alt"></i>
+          </button>
+          <button class="icon-button" id="zoom-in-button" onclick="zoomIn();" title="Zoom In">
+            <i class="fas fa-search-plus"></i>
+          </button>
+          <button class="icon-button" id="zoom-out-button" onclick="zoomOut();" title="Zoom Out">
+            <i class="fas fa-search-minus"></i>
+          </button>
+          <button class="icon-button" onclick="discuss_node();" title="Open Chat">
+            <i class="fas fa-comments"></i>
+          </button>
+          <!--
+          <button class="icon-button" onclick="restructure();" title="Restructure">
+            <i class="fas fa-random"></i>
+          </button>
+          -->
+          <button class="icon-button" onclick="undo();" title="Undo">
+            <i class="fas fa-rotate-left"></i>
+          </button>
+          <button class="icon-button" onclick="redo();" title="Redo">
+            <i class="fas fa-rotate-right"></i>
+          </button>
+          <button class="icon-button" onclick="openSettingsPopup();" title="Settings">
+            <i class="fas fa-gear"></i>
+          </button>
+          <button class="icon-button" onclick="openHelpPopup();" title="Help">
+            <i class="fas fa-info-circle"></i>
+          </button>
+
+          <!-- =========================
+               NEW "STORE TO SERVER" 
+          ========================== -->
+          <button class="icon-button" onclick="save_mindmap_to_server();" title="Store mindmap to server" style="margin-left:20px;">
+            <i class="fas fa-cloud-arrow-up"></i>
+          </button>
+
+          <!-- =========================
+               NEW "GET FROM SERVER" 
+          ========================== -->
+          <button class="icon-button" onclick="openServerListModal();" title="Get from server">
+            <i class="fas fa-cloud-arrow-down"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal listing mindmaps from server -->
+    <style>
+      .modal {
+        display:none;
+        position:fixed;
+        z-index:10000;
+        left:0; top:0; width:100%; height:100%;
+        overflow:auto;
+        background-color: rgba(0,0,0,0.4);
+      }
+      .modal-content {
+        background-color:#fefefe;
+        margin:15% auto;
+        padding:20px;
+        border:1px solid #888;
+        width:80%;
+        text-align:center;
+      }
+    </style>
+    <div id="server-list-modal" class="modal">
+      <div class="modal-content">
+        <h2>Mindmaps on Server</h2>
+        <p>Click a mindmap name to load it:</p>
+        <ul id="server-mindmap-list"></ul>
+        <button onclick="closeServerListModal()">Close</button>
+      </div>
+    </div>
+
+    <script>
+      /**************************************************************
+       * patch_jm + our local IndexedDB usage + open_empty()
+       **************************************************************/
+      function patch_jm(_jm) {
+        // Patch the layout offset
+        _jm.layout._layout_offset_subnodes = function(nodes) {
+          let total_height = 0;
+          const count = nodes.length;
+          let i = count;
+          let node, layout_data, node_outer_height, pd=null, base_y=0;
+          while(i--){
+            node = nodes[i];
+            layout_data = node._data.layout;
+            if(!pd) pd = node.parent._data;
+            node_outer_height = this._layout_offset_subnodes(node.children);
+            if(!node.expanded){
+              node_outer_height=0; this.set_visible(node.children,false);
+            }
+            node_outer_height = Math.max(node._data.view.height, node_outer_height);
+            layout_data.outer_height = node_outer_height;
+            layout_data.offset_y = base_y - node_outer_height/2;
+            layout_data.offset_x = this.opts.hspace*layout_data.direction + (pd.view.width*(pd.layout.direction+layout_data.direction))/2;
+            if(!node.parent.isroot) layout_data.offset_x += this.opts.pspace*layout_data.direction;
+            base_y = base_y - node_outer_height - this.opts.vspace;
+            total_height += node_outer_height;
+          }
+          if(count>1) total_height += this.opts.vspace*(count-1);
+          let mid = total_height/2; i=count;
+          while(i--){
+            node=nodes[i];
+            node._data.layout.offset_y += mid;
+          }
+          return total_height+10;
+        };
+
+        _jm.layout._layout_offset_subnodes_height = function(nodes){
+          let total_height=0, count=nodes.length, i=count;
+          let node, layout_data, node_outer_height, pd=null, base_y=0;
+          while(i--){
+            node=nodes[i];
+            layout_data=node._data.layout;
+            if(!pd) pd=node.parent._data;
+            node_outer_height=this._layout_offset_subnodes_height(node.children);
+            if(!node.expanded) node_outer_height=0;
+            node_outer_height=Math.max(node._data.view.height,node_outer_height);
+            layout_data.outer_height=node_outer_height;
+            layout_data.offset_y=base_y-node_outer_height/2;
+            base_y=base_y-node_outer_height-this.opts.vspace;
+            total_height+=node_outer_height;
+          }
+          if(count>1) total_height+=this.opts.vspace*(count-1);
+          let mid=total_height/2; i=count;
+          while(i--){
+            node=nodes[i];
+            node._data.layout.offset_y+=mid;
+          }
+          console.log("layout", total_height);
+          return total_height+10;
+        };
+      }
+
+      const buttonBar = document.getElementById("button-bar");
+      buttonBar.addEventListener("mousedown", (ev)=>{
+        const offsetX=ev.clientX - buttonBar.getBoundingClientRect().left;
+        const offsetY=buttonBar.getBoundingClientRect().bottom;
+        const onMouseMove=(e2)=>{
+          buttonBar.style.left=(e2.clientX-offsetX)+"px";
+          buttonBar.style.bottom=(offsetY-e2.clientY)+"px";
+        };
+        const onMouseUp=()=>{
+          document.removeEventListener("mousemove",onMouseMove);
+          document.removeEventListener("mouseup",onMouseUp);
+        };
+        document.addEventListener("mousemove",onMouseMove);
+        document.addEventListener("mouseup",onMouseUp);
+      });
+
+      function showSpinner(){ document.getElementById("add-node-button").innerHTML='<i class="fas fa-spinner fa-spin"></i>'; }
+      function hideSpinner(){ document.getElementById("add-node-button").innerHTML='<i class="fas fa-edit"></i>'; }
+
+      function getParameterFromUrl(paramName){
+        try {
+          const urlParams=new URLSearchParams(window.location.search);
+          return urlParams.get(paramName);
+        } catch(_){ return null;}
+      }
+
+      let dbName=getParameterFromUrl("map");
+      if(!dbName) dbName="default";
+
+      async function openDatabase(dbName){
+        return new Promise((resolve,reject)=>{
+          const req=indexedDB.open(dbName,1);
+          req.onupgradeneeded=(ev)=>{
+            const db=ev.target.result;
+            db.createObjectStore("dataStore",{keyPath:"id"});
+          };
+          req.onsuccess=(ev)=>resolve(ev.target.result);
+          req.onerror=(ev)=>reject(ev.target.error);
+        });
+      }
+
+      async function loadData(dbName, defaultValue){
+        try{
+          const db=await openDatabase(dbName);
+          return new Promise((resolve,reject)=>{
+            const tx=db.transaction(["dataStore"],"readonly");
+            const obj=tx.objectStore("dataStore");
+            const req=obj.get(1);
+            req.onsuccess=(evt)=>{
+              const data=evt.target.result;
+              resolve(data?data.value:defaultValue);
+            };
+            req.onerror=(err)=>reject(err);
+          });
+        } catch(e){
+          console.error("Error loading data:",e);
+          return defaultValue;
+        }
+      }
+      async function saveData(dbName, data){
+        try {
+          const db=await openDatabase(dbName);
+          return new Promise((resolve,reject)=>{
+            const tx=db.transaction(["dataStore"],"readwrite");
+            const obj=tx.objectStore("dataStore");
+            const req=obj.put({id:1,value:data});
+            req.onsuccess=()=>resolve();
+            req.onerror=(err)=>reject(err);
+          });
+        } catch(e){
+          console.error("Error saving data:",e);
+        }
+      }
+
+      var _jm=null;
+      var redo_manager_disabled=false;
+
+      function get_def_options(){
+        return {
+          container:"jsmind_container",
+          theme:"asphalt",
+          editable:true,
+          support_html:true,
+          view:{
+            node_overflow:"wrap",
+            engine:"svg",
+            draggable:true,
+            line_width:3
+          },
+          layout:{
+            hspace:40,
+            vspace:10,
+            pspace:20
+          }
+        };
+      }
+
+      function get_def_mind(){
+        return {
+          meta:{name:"Simbiotico",author:"someone",version:"0.1"},
+          format:"node_tree",
+          data:{id:"root",topic:"Simbiotico"},
+        };
+      }
+
+      function init_jm(opts, mind){
+        _jm=new jsMind(opts);
+        patch_jm(_jm);
+        _jm.show(mind);
+        // load UI from mind
+        load_meta_properties(mind);
+        _jm.add_event_listener(async(type,data)=>{
+          if(["update_node","expand_node","collapse_node","remove_node"].includes(data.evt)){
+            await autoSaveData();
+          } else { console.log("event",data); }
+        });
+        return _jm;
+      }
+
+      async function open_empty(){
+        const def_opts=get_def_options();
+        const defaultMind=get_def_mind();
+        const loaded=await loadData(dbName, defaultMind);
+        console.log("open_empty => loaded from IndexedDB or default:", loaded);
+        undoRedoManager.performAction(loaded);
+        _jm=init_jm(def_opts,loaded);
+      }
+
+      async function autoSaveData(){
+        if(!_jm) return;
+        const data=_jm.get_data();
+        if(!redo_manager_disabled){
+          undoRedoManager.performAction(data);
+        }
+        document.title=data.data.topic;
+        recordSettings(data);
+        await saveData(dbName,data);
+      }
+
+      // local .jm file
+      function save_file(){
+        const mind_data=_jm.get_data();
+        const mind_name=mind_data.meta.name||"myMindmap";
+        const mind_str=jsMind.util.json.json2string(mind_data);
+        jsMind.util.file.save(mind_str,"text/jsmind",mind_name+".jm");
+      }
+      function open_file(ev){
+        const files=document.getElementById("file_input").files;
+        if(_jm.get_data().data.children?.length){
+          prompt_info("Please start with an empty mindmap before loading from disk.");
+          ev.target.value=null;
+          return;
+        }
+        if(files.length>0){
+          const fileData=files[0];
+          jsMind.util.file.read(fileData,(jsmind_data,jsmind_name)=>{
+            const mind=jsMind.util.json.string2json(jsmind_data);
+            if(mind){
+              _jm.show(mind);
+              load_meta_properties(mind);
+            } else {
+              prompt_info("Cannot open this file as mindmap");
+            }
+          });
+        } else {
+          prompt_info("Please choose a file first");
+        }
+        ev.target.value=null;
+      }
+      document.getElementById("file_input").addEventListener("change",open_file);
+
+      // GPT placeholders
+      const API_URL="https://api.openai.com/v1/chat/completions";
+      async function chatGPTRequest(prompt, curNode=null){
+        try{
+          const engine=document.getElementById("gpt-engine").value||"gpt-3.5-turbo";
+          let temperature=parseFloat(document.getElementById("temperature").value);
+          if(isNaN(temperature)) temperature=0.3;
+
+          const resp=await fetch(API_URL,{
+            method:"POST",
+            headers:{
+              "Content-Type":"application/json",
+              Authorization:`Bearer ${API_KEY}`
+            },
+            body:JSON.stringify({
+              model:engine,
+              messages:[{role:"user",content:prompt}],
+              temperature
+            })
+          });
+          if(!resp.ok){
+            prompt_info("Error with OpenAI API, code="+resp.status);
+            return;
+          }
+          const data=await resp.json();
+          addTokenUsage(data.usage.total_tokens);
+          const out=data.choices[0].message.content;
+          if(curNode){
+            const d=curNode.data;
+            if(!d.chatlog) d.chatlog="";
+            d.chatlog+="user-message:\n"+prompt+"\n";
+            d.chatlog+="gpt-message:\n"+out+"\n\n";
+            _jm.set_node_color(curNode.id,"#FFA533",null);
+            await autoSaveData();
+          }
+          return out;
+        } catch(err){
+          console.error("chatGPTRequest error:",err);
+        }
+      }
+
+      function createHyphenatedList(node, depth=0){
+        let str="";
+        let prefix=" ".repeat(depth*2);
+        str+=prefix+"- "+node.topic+"\n";
+        if(!node.expanded) return str;
+        if(node.children){
+          for(const c of node.children){
+            str+=createHyphenatedList(c, depth+1);
+          }
+        }
+        return str;
+      }
+
+      // process GPT embed
+      function processGptResponse(response, selected_node, _jm, do_scroll=true){
+        const embedRe=/<embed>([\s\S]*?)<\/embed>/;
+        const match=response.match(embedRe);
+        if(!match){
+          prompt_info("No <embed> found in GPT response");
+          return;
+        }
+        const embed=match[1].trim();
+        const lines=embed.split("\n");
+        const hierarchy=[];
+        for(const line of lines){
+          const lvl=line.search(/\S/);
+          const content=line.trim().replace(/^-/,"").trim();
+          hierarchy.push({
+            level:lvl/2,
+            content,
+            id:jsMind.util.uuid.newid()
+          });
+        }
+        for(let i=0;i<hierarchy.length;i++){
+          const cur=hierarchy[i];
+          let parentId=selected_node;
+          if(cur.level>0){
+            for(let j=i-1;j>=0;j--){
+              if(hierarchy[j].level===cur.level-1){
+                parentId=hierarchy[j].id; break;
+              }
+            }
+          }
+          const nd=_jm.add_node(parentId,cur.id,cur.content);
+          if(do_scroll){
+            nd._data.view.element.scrollIntoView({behavior:"smooth",block:"nearest"});
+          }
+        }
+      }
+
+      // Buttons
+      async function add_node(){
+        const sel=_jm.get_selected_node();
+        if(!sel) return prompt_info("Select a node first!");
+        const template=document.getElementById("child-node-suggestion").value;
+        showSpinner();
+        const data=await chatGPTRequest(template, sel);
+        hideSpinner();
+        if(!data) return;
+        redo_manager_disabled=true;
+        processGptResponse(data,sel,_jm,true);
+        setTimeout(async()=>{
+          redo_manager_disabled=false;
+          await autoSaveData();
+        },1000);
+      }
+      async function add_node2(){
+        const sel=_jm.get_selected_node();
+        if(!sel) return prompt_info("Select a node first!");
+        const template=document.getElementById("child-node-suggestion2").value;
+        showSpinner();
+        const data=await chatGPTRequest(template, sel);
+        hideSpinner();
+        if(!data) return;
+        redo_manager_disabled=true;
+        processGptResponse(data,sel,_jm,true);
+        setTimeout(async()=>{
+          redo_manager_disabled=false;
+          await autoSaveData();
+        },1000);
+      }
+
+      function zoomIn(){
+        if(_jm.view.zoomIn()){
+          document.getElementById("zoom-out-button").disabled=false;
+        } else {
+          document.getElementById("zoom-in-button").disabled=true;
+        }
+      }
+      function zoomOut(){
+        if(_jm.view.zoomOut()){
+          document.getElementById("zoom-in-button").disabled=false;
+        } else {
+          document.getElementById("zoom-out-button").disabled=true;
+        }
+      }
+      function expand_all(){ _jm.expand_all(); }
+      function collapse_all(){ _jm.collapse_all(); }
+
+      // show alert
+      function prompt_info(msg){ showCustomAlert(msg); }
+
+      // Undo/Redo
+      function undo(){
+        const repeat=undoRedoManager.undo(_jm.get_data());
+        if(repeat) _jm.show(repeat);
+      }
+      function redo(){
+        const repeat=undoRedoManager.redo();
+        if(repeat) _jm.show(repeat);
+      }
+
+      // Actually init everything
+      open_empty();
+
+      /***************************************************
+       * NEW: "Store to server" + "Get from server"
+       ***************************************************/
+      async function save_mindmap_to_server(){
+        // If no "?map=filename" param => ask user for filename
+        let param=dbName;
+        if(!param || !param.trim() || param==="default"){
+          const newName=prompt("Enter a name for this mindmap:");
+          if(!newName) return;
+          // Possibly check if exists
+          try{
+            const check=await fetch("/api/loadMindmap?filename="+encodeURIComponent(newName));
+            const checkJson=await check.json();
+            if(checkJson.success){
+              const sure=confirm(`"${newName}.jm" already exists. Overwrite?`);
+              if(!sure) return;
+            }
+          }catch(err){ console.error(err); }
+          // Update the URL param
+          const newUrl=window.location.origin+window.location.pathname+"?map="+encodeURIComponent(newName);
+          window.history.pushState({}, "", newUrl);
+          param=newName;
+          dbName=newName; // update so we store next time
+        } else {
+          // param was not "default"? then check
+          try{
+            const check=await fetch("/api/loadMindmap?filename="+encodeURIComponent(param));
+            const checkJson=await check.json();
+            if(checkJson.success){
+              const sure=confirm(`"${param}.jm" already exists. Overwrite?`);
+              if(!sure) return;
+            }
+          }catch(e){ console.error(e); }
+        }
+        // do actual save
+        const mindData=_jm.get_data();
+        const mindStr=jsMind.util.json.json2string(mindData);
+        try{
+          const resp=await fetch("/api/saveMindmap",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({filename:param, fileContent:mindStr})
+          });
+          const j=await resp.json();
+          if(j.success) showCustomAlert(`Saved "${param}.jm" to server OK!`);
+          else showCustomAlert("Failed to save mindmap: "+(j.error||"??"));
+        }catch(err){
+          console.error(err);
+          showCustomAlert("Error contacting server while saving mindmap");
+        }
+      }
+
+      async function openServerListModal(){
+        const modal=document.getElementById("server-list-modal");
+        const listEl=document.getElementById("server-mindmap-list");
+        listEl.innerHTML="(loading...)";
+        modal.style.display="block";
+
+        try{
+          const resp=await fetch("/api/listMindmaps");
+          const data=await resp.json();
+          if(!data.success){
+            showCustomAlert("Error listing mindmaps: "+(data.error||""));
+            listEl.innerHTML="";
+            return;
+          }
+          listEl.innerHTML="";
+          const maps=data.maps||[];
+          if(maps.length<1){
+            const li=document.createElement("li");
+            li.textContent="(No .jm files found)";
+            listEl.appendChild(li);
+          } else {
+            maps.forEach(filename=>{
+              const li=document.createElement("li");
+              li.style.cursor="pointer";
+              li.textContent=filename;
+              li.onclick=()=>{ load_mindmap_from_server(filename); };
+              listEl.appendChild(li);
+            });
+          }
+        }catch(err){
+          console.error(err);
+          showCustomAlert("Error listing mindmaps from server");
+        }
+      }
+      function closeServerListModal(){
+        document.getElementById("server-list-modal").style.display="none";
+      }
+
+      async function load_mindmap_from_server(filename){
+        // confirm if we have existing mindmap content
+        if(_jm.get_data().data.children?.length){
+          const sure=confirm("Your current mindmap is not empty. Overwrite it with: "+filename+"?");
+          if(!sure) return;
+        }
+        // direct load
+        try{
+          const url="/api/loadMindmap?filename="+encodeURIComponent(filename);
+          const resp=await fetch(url);
+          const j=await resp.json();
+          if(!j.success){
+            showCustomAlert("Failed to load mindmap: "+(j.error||"??"));
+            return;
+          }
+          // parse JSON => show
+          const mind=jsMind.util.json.string2json(j.fileContent);
+          if(mind){
+            // update param
+            const newUrl=window.location.origin+window.location.pathname+"?map="+encodeURIComponent(filename);
+            window.history.pushState({}, "", newUrl);
+            dbName=filename;
+
+            _jm.show(mind);
+            load_meta_properties(mind);
+            // store into local IndexedDB also
+            await saveData(dbName, mind);
+            showCustomAlert("Loaded "+filename+" OK!");
+          } else {
+            showCustomAlert("Cannot parse mindmap JSON from server");
+          }
+        } catch(err){
+          console.error(err);
+          showCustomAlert("Error loading from server");
+        }
+        closeServerListModal();
+      }
+    </script>
+
+    <!-- UndoRedo Manager, popups, chat, settings, etc. EXACT same snippet as your original code for help, custom alert, etc. -->
+    <script>
+      class UndoRedoManager {
+        constructor(maxSize){this.undoStack=[];this.redoStack=[];this.maxSize=maxSize;}
+        performAction(state){
+          this.undoStack.push(JSON.parse(JSON.stringify(state)));
+          if(this.undoStack.length>this.maxSize) this.undoStack.shift();
+          this.redoStack=[];
+        }
+        undo(cur){
+          if(!this.undoStack.length) return null;
+          const prev=this.undoStack.pop();
+          if(!this.undoStack.length) this.undoStack.push(prev);
+          if(prev==cur){
+            if(this.undoStack.length<2)return null;
+            else return this.undo(cur);
+          }
+          this.redoStack.push(JSON.parse(JSON.stringify(prev)));
+          return prev;
+        }
+        redo(){
+          if(!this.redoStack.length)return null;
+          const next=this.redoStack.pop();
+          this.undoStack.push(JSON.parse(JSON.stringify(next)));
+          return next;
+        }
+      }
+      const undoRedoManager=new UndoRedoManager(20);
+
+      // We also have help popup, custom alert, chat popup, settings popup code (omitted for brevity)...
+
+      // minimal example of "showCustomAlert"
+      function showCustomAlert(msg){
+        const alertEl=document.getElementById("custom-alert");
+        const msgEl=document.getElementById("custom-alert-message");
+        msgEl.textContent=msg;
+        alertEl.classList.remove("hidden");
+      }
+      function closeCustomAlert(){
+        document.getElementById("custom-alert").classList.add("hidden");
+      }
+    </script>
+
+
+    <style>
+	  .help-popup {
+		position: fixed;
+		top: 60px;
+		right: 60px;
+		width: 600px;
+		max-height: 750px;
+		background: white;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		display: flex;
+		flex-direction: column;
+		z-index: 1000;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	  }
+
+	  .help-popup-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 5px;
+		background: #0066ff;
+		color: white;
+		font-weight: bold;
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px; 
+		font-family: "Roboto", sans-serif;
+	   max-height: 35px;
+	  }
+
+	  .help-popup-header h3 {
+		margin: 0;
+		font-family: "Roboto", sans-serif;
+		font-weight: 500;
+		font-size: 18px; /* Adjust the font size according to your design preferences */
+	  }
+
+	  .help-close-btn {
+		background: transparent;
+		border: none;
+		color: white;
+		padding: 0;
+		margin: 0;
+		max-width: 30px;
+		align: right;
+		font-weight: bold;
+		font-size: 16px;
+		cursor: pointer;
+	  }
+
+	  .help-popup-content {
+		padding: 20px;
+		overflow-y: auto;
+		font-family: "Roboto", sans-serif;
+	  }
+
+	</style>
+
+	<div id="help-popup" class="help-popup hidden">
+	  <div class="help-popup-header">
+		<h3>Help</h3>
+		<button class="help-close-btn" onclick="closeHelpPopup()">
+		  <i class="fas fa-window-close"></i>
+		</button>
+	  </div>
+
+	  <div class="help-popup-content">
+		Creating a new map and setting the map name:
+		<ul>
+		  <li> Change the URL to file://<path>/simbiotica.html?map=[map_name] </li>
+		  <li> This format was chosen for easy bookmarking in your web browser </li>
+		</ul>
+		Security:
+		<ul>
+		  <li> The security of your OpenAI API key is important. Efforts have been made with this app to ensure its safety.</li>
+		  <li> This code is open source and not minified, making it easily reviewable.</li>
+		  <li> Your API key is not stored locally in any persistent storage and must be entered each time you load this page.</li>
+		  <li> All imports have SRI hashes, and external code has been reviewed for potential issues.</li>
+		  <li> This app is fairly lightweight in its usage, but make sure you have a spending limit on your OpenAI account. You can see token count usage in the settings page.</li>
+		</ul>
+		Interacting with the mindmap:
+		<ul>
+		  <li> Mouse click to select a node, double-click to edit, press Enter to save </li>
+		  <li> You can either click and drag your mouse to pan the mindmap, or use mousewheel / two-finger guestures on touchpad to scroll the mindmap vertically or horizontally if it's larger in those dimensions (respectively) to the screen. </li>
+		  <li> Mouse drag nodes to move to another node</li>
+		  <li> Mouse click small circle to expand/collapse</li>
+		  <li> Press Enter to create a sibling node</li>
+		  <li> Press Ctrl-Enter to create a child node</li>
+		  <li> Press Delete to delete a node</li>
+		</ul>
+		Note that maps are autosaved via the IndexedDB API, browser-based storage that is only accessible by the same origin. In other words, your maps can only be accessed from where this page is being served from. Be careful when using other browser-based applications you save/serve from the same location, as they can access the IndexDB API storage. Use only code that is openly reviewable, open source, or from a trusted entity.
+		<br />
+		<br />
+		Button bar:
+		<ul>
+		  <li> <i class="fas fa-download"></i> - Make a backup of the map. As mentioned above, the map is already stored in your browser, but this can be used for transferring between computers.</li>
+		  <li> <i class="fas fa-upload"></i> - Load a backup of the map. The map must be empty to ensure you don't accidentally overwrite another map.</li>
+		  <li> <i class="fas fa-share-alt"></i> - Get suggestions from GPT-3.5, which is what this is all about!  You can configure how this is done in settings.</li>
+		  <li> <i class="fas fa-compress-alt"></i> - Collapse all</li>
+		  <li> <i class="fas fa-expand-alt"></i> - Expand all</li>
+		  <li> <i class="fas fa-search-plus"></i> - Zoom in</li>      
+		  <li> <i class="fas fa-search-minus"></i> - Zoom out</li>
+		  <li> <i class="fas fa-comments"></i> - Engage in a deeper discussion with GPT-3.5 about a particular node.  The first time you chat about a node both the mindmap and a series of questions will be sent to GPT API.  Subsequently, all messages will be prefixed with the mindmap only.  You can configure these prompts in settings.</li>
+		  <li> <i class="fas fa-rotate-left"></i> - Undo, may have to click twice.  This is a bit hard to use right now, working on it.</li>
+		  <li> <i class="fas fa-rotate-right"></i> - Redo, may have to click twice</li>
+		  <li> <i class="fas fa-gear"></i> - Settings. You can change the prompts used to get suggestions and discuss nodes. Make sure you review them carefully before making changes. Backing up a copy of the prompt for reverting is probably a good idea.</li>
+		</ul>
+		  </div>
+	  </div>
+		</ul>
+		
+	  </div>
+	</div>
+
+	<script type="text/javascript">
+	  setupPopSizeListener(750, 600, document.getElementById("help-popup"));
+	  
+	  function openHelpPopup() {
+		document.getElementById("help-popup").classList.remove("hidden");
+	  }
+
+	  function closeHelpPopup() {
+		document.getElementById("help-popup").classList.add("hidden");
+	  }
+
+	</script>
+
+		<style>
+	  .hidden {
+		display: none;
+	  }
+
+	  .custom-alert {
+		position: fixed;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0, 0, 0, 0.5);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 20000;
+	  }
+
+	  .custom-alert-content {
+		background-color: white;
+		padding: 20px;
+		border-radius: 5px;
+		text-align: center;
+	  }
+
+	  .custom-alert-message {
+		display: block;
+		margin-bottom: 20px;
+	  }
+
+	  .custom-alert-close {
+		background-color: #0066ff;
+		color: white;
+		border: none;
+		border-radius: 3px;
+		padding: 8px 16px;
+		cursor: pointer;
+		font-weight: bold;
+	  }
+	</style>
+
+	<div id="custom-alert" class="custom-alert hidden">
+	  <div class="custom-alert-content">
+		<span id = "custom-alert-message" class="custom-alert-message"></span>
+		<button class="custom-alert-close" onclick="closeCustomAlert()">OK</button>
+	  </div>
+	</div>
+
+	<script type="text/javascript">
+	  function showCustomAlert(message) {
+		const customAlert = document.getElementById("custom-alert");
+		const customAlertMessage = document.getElementById("custom-alert-message");
+		customAlertMessage.textContent = message;
+		customAlert.classList.remove("hidden");
+	  }
+
+	  function closeCustomAlert() {
+		const customAlert = document.getElementById("custom-alert");
+		customAlert.classList.add("hidden");
+	  }
+	</script>
+
+		<!-- logindiv -->
+	<style>
+		.modal {
+		  display:none;
+		  position:fixed;
+		  z-index:10000;
+		  left:0; top:0; width:100%; height:100%;
+		  overflow:auto;
+		  background-color: rgba(0,0,0,0.4);
+		}
+
+	  .modal-content {
+		background-color: #fefefe;
+		margin: 15% auto;
+		padding: 20px;
+		border: 1px solid #888;
+		width: 80%;
+		text-align: center;
+	  }
+
+	  input[type="text"] {
+		width: 100%;
+		padding: 12px 20px;
+		margin: 8px 0;
+		display: inline-block;
+		border: 1px solid #ccc;
+		box-sizing: border-box;
+	  }
+
+	  button {
+		background-color: #4caf50;
+		color: white;
+		padding: 14px 20px;
+		margin: 8px 0;
+		border: none;
+		cursor: pointer;
+		width: 100%;
+	  }
+
+	  button:hover {
+		opacity: 0.8;
+	  }
+	</style>
+	<div id="api-key-modal" class="modal">
+	  <div class="modal-content">
+		<h2>Enter GPT3.5-turbo API Key</h2>
+		<p>Please enter your GPT3.5-turbo API key to continue.  This is a browser side application only, no server except for OpenAI.<br/>
+		  The key is not persisted in browser storage and only used when sending to OpenAI REST api. <br />
+		  Token usage is relatively light and you can find a total usage count via settings (gear) icon. <br />
+		  The source code is not minified and should be easily reviewable via developer tools, your filesystem, and/or the github repo.<br />
+		  Make sure to follow <a href=http://twitter.com/QRDL>http://twitter.com/QRDL</a> for information and updates.<br />
+		<input type="text" id="api-key-input" style="-webkit-text-security: disc;">
+		<button id="submit-api-key">Submit</button>
+	  </div>
+	</div>
+
+	<script type="text/javascript">
+	// Variabel global
+	let API_KEY = "";
+
+	// Begitu halaman selesai di-load
+	document.addEventListener("DOMContentLoaded", function() {
+	  // Debugger #1: memastikan DOMContentLoaded benar-benar terpanggil
+	  debugger;
+
+	  // Tangkap elemen modal
+	  const apiKeyModal = document.getElementById("api-key-modal");
+	  const submitApiKeyButton = document.getElementById("submit-api-key");
+	  const apiKeyInput = document.getElementById("api-key-input");
+
+	  // [A] Tampilkan modal *setiap kali* halaman dibuka
+	  apiKeyModal.style.display = "block";
+
+	  // [B] Ketika user klik tombol "Submit"
+	  submitApiKeyButton.addEventListener("click", () => {
+		// Debugger #2: memastikan event click tertangani
+		debugger;
+
+		const newKey = apiKeyInput.value.trim();
+		if (newKey) {
+		  // (1) Simpan ke variabel global
+		  API_KEY = newKey;
+		  // (2) Tutup modal
+		  apiKeyModal.style.display = "none";
+		  // (3) Kosongkan input untuk jaga-jaga
+		  apiKeyInput.value = "";
+		} else {
+		  showCustomAlert("Please enter a valid API key.");
+		}
+	  });
+	});
+	</script>
+
+
+		<style>
+	  .popup {
+		position: fixed;
+		top: 60px;
+		right: 60px;
+		width: 600px;
+		height: 750px;
+		background: white;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		display: flex;
+		flex-direction: column;
+		z-index: 1000;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	  }
+
+	  .popup-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 5px;
+		background: #0066ff;
+		color: white;
+		font-weight: bold;
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+		font-family: "Roboto", sans-serif;
+	  }
+
+	  .popup-header h3 {
+		margin: 0;
+		font-family: "Roboto", sans-serif;
+		font-weight: 500;
+		font-size: 18px; /* Adjust the font size according to your design preferences */
+	  }
+
+	  .close-btn {
+		background: transparent;
+		border: none;
+		color: white;
+		font-weight: bold;
+		font-size: 16px;
+		cursor: pointer;
+	  }
+
+	  .popup-content {
+		padding: 20px;
+		overflow-y: auto;
+	  }
+
+	  .form-group {
+		display: flex;
+		flex-direction: column;
+		margin-bottom: 20px;
+	  }
+
+	  label {
+		margin-bottom: 5px;
+		font-family: "Roboto", sans-serif;
+	  }
+
+	  textarea,
+	  input {
+		padding: 8px;
+		border: 1px solid #ccc;
+		border-radius: 4px;
+		resize: vertical;
+	  }
+
+	  .save-btn {
+		background: #0066ff;
+		color: white;
+		border: none;
+		border-radius: 4px;
+		padding: 8px 16px;
+		font-weight: bold;
+		cursor: pointer;
+		align-self: flex-end;
+	  }
+	</style>
+
+	<!-- settingsdiv -->
+	<div id="settings-popup" class="popup hidden">
+	  <div class="popup-header">
+		<h3>Settings</h3>
+		<button class="close-btn" onclick="closeSettingsPopup()">
+		  <i class="fas fa-window-close"></i>
+		</button>
+	  </div>
+	  <div class="popup-content">
+		<form id="settings-form">
+		  <div class="form-group">
+			<label for="token-usage">Token Usage for this map:</label>
+			<label
+			  id="token-usage"
+			></label>
+		  </div>
+		  <div class="form-group">
+			<label for="child-node-suggestion">Answer Questions Prompt:</label>
+			<textarea
+			  id="child-node-suggestion"
+			  rows="8"
+			  placeholder="Enter child node suggestion prompt."
+			></textarea>
+		  </div>
+		  <div class="form-group">
+			<label for="child-node-suggestion2">Make Questions Prompt:</label>
+			<textarea
+			  id="child-node-suggestion2"
+			  rows="8"
+			  placeholder="Enter child node suggestion prompt."
+			></textarea>
+		  </div>
+		  <div class="form-group">
+			<label for="discuss-node-prompt">Discuss Node Prompt:</label>
+			<textarea
+			  id="discuss-node-prompt"
+			  rows="18"
+			  placeholder="Enter discuss node prompt"
+			></textarea>
+		  </div>
+		  <div class="form-group">
+			<label for="prefix-prompt">Discuss Prompt Prefix:</label>
+			<textarea
+			  id="prefix-prompt"
+			  rows="5"
+			  placeholder="Enter prompt prefix"
+			></textarea>
+		  </div>
+	<!--      <div class="form-group">
+			<label for="prefix-prompt">Restructure Prompt:</label>
+			<textarea
+			  id="restructure-prompt"
+			  rows="5"
+			  placeholder="Enter restructure"
+			></textarea>
+		  </div>-->
+		  <div class="form-group">
+			<label for="gpt-engine">GPT Engine:</label>
+			<input id="gpt-engine" type="text" placeholder="Enter GPT engine" />
+		  </div>
+			
+		  <div class="form-group">
+			<label for="temperature">Temperature:</label>
+			<input id="temperature" type="text" placeholder="Enter temperature" />
+		  </div>
+			
+		  <div class="form-group">
+			<label for="theme">Theme:</label>
+		  <select onchange="set_theme(this.value);">
+			  <option value="">default</option>
+			  <option value="primary">primary</option>
+			  <option value="warning">warning</option>
+			  <option value="danger">danger</option>
+			  <option value="success">success</option>
+			  <option value="info">info</option>
+			  <option value="greensea" selected="selected">greensea</option>
+			  <option value="nephrite">nephrite</option>
+			  <option value="belizehole">belizehole</option>
+			  <option value="wisteria">wisteria</option>
+			  <option value="asphalt">asphalt</option>
+			  <option value="orange">orange</option>
+			  <option value="pumpkin">pumpkin</option>
+			  <option value="pomegranate">pomegranate</option>
+			  <option value="clouds">clouds</option>
+			  <option value="asbestos">asbestos</option>
+			</select>
+		  </div>
+		</form>
+	  </div>
+	</div>
+
+	<script type="text/javascript">
+	  setupPopSizeListener(750, 600, document.getElementById("settings-popup"));
+	  
+	  function set_theme(theme_name) {
+		_jm.set_theme(theme_name);
+	  }
+
+
+	  function getValueOrDefault(obj, key, defaultValue) {
+		if (!obj.hasOwnProperty(key)) {
+		  return defaultValue;
+		}
+		return obj[key];
+	  }
+
+	  function openSettingsPopup() {
+		document.getElementById("settings-popup").classList.remove("hidden");
+	  }
+
+	  function closeSettingsPopup() {
+		console.log("close");
+		document.getElementById("settings-popup").classList.add("hidden");
+		autoSaveData();
+	  }
+	  function recordSettings(data) {
+		console.log(data);
+		// Get the values from the form fields
+		data["child-node-suggestion"] = document.getElementById(
+		  "child-node-suggestion"
+		).value;
+		data["child-node-suggestion2"] = document.getElementById(
+		  "child-node-suggestion2"
+		).value;
+		data["discuss-node-prompt"] = document.getElementById(
+		  "discuss-node-prompt"
+		).value;
+		data["prefix-prompt"] = document.getElementById("prefix-prompt").value;
+		//data["restructure-prompt"] = document.getElementById("restructure-prompt").value;
+		data["gpt-engine"] = document.getElementById("gpt-engine").value;
+		data["token-usage"] = document.getElementById("token-usage").textContent;
+		data["temperature"] = document.getElementById("temperature").value;
+		console.log("recordSettings", data);
+	  }
+
+	  function addTokenUsage(tokens) {
+		  value = document.getElementById("token-usage").textContent;
+		  if (value == "" || isNaN(parseInt(value))) {
+		  count = 0;
+		  } else {
+		  count = parseInt(value);
+		  }
+		  console.log("addTokenUsage", value, count, tokens, count+tokens);
+		  document.getElementById("token-usage").textContent = (count + tokens).toString();
+	  }
+	  
+	  function saveSettings(event) {
+		if (event) event.preventDefault();
+		closeSettingsPopup();
+	  }
+
+	  // Attach the event listener to the form
+	  document
+		.getElementById("settings-form")
+		.addEventListener("submit", saveSettings);
+
+	  function load_meta_properties(options) {
+		document.getElementById("token-usage").textContent = getValueOrDefault(
+		options, "token-usage", (0).toString())
+		document.getElementById("discuss-node-prompt").value = getValueOrDefault(
+		  options,
+		  "discuss-node-prompt",
+		  "I am creating a mindmap.  Here is what's currently visible in the mindmap:\n" +
+			"${hyphenated_list}\n" +
+			"I'd like to discuss with you about the '${text_of_node}' node.\n" +
+			"Respond with your thoughts on:\n" +
+			"1. What this node means, both specifically and generally\n" +
+			"2. The relevance of this node, how it contributes individually and holistically\n" +
+			"3. Where it fits in the mindmap (see the indented listed above)\n" +
+			"4. What are some things to consider when adding children, sibling, and parent nodes around it in the mindmap\n" +
+			"5. What are some good questions to ask ChatGPT to get a better understanding of this node?\n" +
+			"6. And finally, just some novel creative ideas to think about in relation to this node.\n" +
+			"When addressing these points, please remember we're talking about the ${text_of_node}' node within the context of the hyphenated mindmap list above."
+		);
+
+		document.getElementById("child-node-suggestion").value = getValueOrDefault(
+		  options,
+		  "child-node-suggestion",
+		"I am creating a mindmap.\n"+
+		"Provide a list of suggestions of answer, that would be ideal children of '${text_of_node}', with no empty lines. If '${text_of_node}' is open ended question then provide at least 2-3 answers. there is no limit for the amount answer as long it answer the critical problem and ideas in questions, and prefer answer in different prospective. If '${text_of_node}'  is direct question, you may answer direct it with only 1 direct answer.\n"+ 
+		"The list should be prioritized by relevance and importance.\n"+
+		"Surround the list of suggestions with <embed></embed>\n"+
+		"Do not repeat ${text_of_node}' in the list.\n"+
+		"Do not give numbering into your list\n"
+		);
+		
+			document.getElementById("child-node-suggestion2").value = getValueOrDefault(
+		  options,
+		  "child-node-suggestion2",
+		"I am creating a mindmap.\n"+
+		"Provide a list of suggestions of questions, that would be ideal children of '${text_of_node}', with no empty lines, in the same text_of_node format above. The list should be prioritized by relevance and importance.\n"+
+		"Surround the list of suggestions with <embed></embed>\n"+
+		"Do not repeat ${text_of_node}' in the list.\n"+
+		"Do not give numbering into your list\n"
+		);
+		
+		document.getElementById("prefix-prompt").value = getValueOrDefault(
+		  options,
+		  "prefix-prompt",
+		  "I am creating a mindmap, here's what's currently visible in the mindmap:\n${hyphenated_list}\nI would like to discuss the '${cur_topic}' node.\n\n"
+		);
+
+	   /* document.getElementById("restructure-prompt").value = getValueOrDefault(
+		  options,
+		  "restructure-prompt",
+		"I am creating a mindmap, here's what is currently visible in the mindmap:\n${hyphenated_list}\n"+
+		"Restructure the mindmap listed above into a more cohesive, clear, and impactful mindmap.\n"+
+			"The restructured mindmap should have many levels, but no less than 3 children and no more than 6 children per item.\n"+
+			"Use the same hyphenated hierarchical format above, with no empty lines.\n"+
+			"Ensure that the hierarchical hyphenated list is surrounded by <embed></embed>.\n"+
+			"Do not include the top level node.\n"
+		);*/
+
+		document.getElementById("gpt-engine").value = getValueOrDefault(
+		  options,
+		  "gpt-engine",
+		  "gpt-3.5-turbo"
+		);
+		document.getElementById("temperature").value = getValueOrDefault(
+		  options,
+		  "temperature",
+		  "0.7"
+		);
+	  }
+	</script>
+
+		<style>
+	  .chat-popup {
+		position: fixed;
+		bottom: 60px;
+		right: 60px;
+		width: 600px;
+		height: 800px;
+		background: white;
+		border: 1px solid #ccc;
+		border-radius: 5px;
+		display: flex;
+		flex-direction: column;
+		z-index: 1000;
+		box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+	  }
+
+	  .chat-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding: 5px;
+		background: #0066ff;
+		color: white;
+		font-weight: bold;
+		border-top-left-radius: 5px;
+		border-top-right-radius: 5px;
+	  }
+
+	  .chat-header h3 {
+		margin: 0;
+		font-family: "Roboto", sans-serif;
+		font-weight: 500;
+		font-size: 18px; /* Adjust the font size according to your design preferences */
+	  }
+
+	  .close-btn {
+		background: transparent;
+		border: none;
+		color: white;
+		font-weight: bold;
+		font-size: 16px;
+		cursor: pointer;
+		position: absolute;
+		top: 5px;
+		right: 5px;
+		padding: 0;
+		margin: 0;
+		width: 20px;
+	  }
+
+	  .chat-header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	  }
+
+	  .chat-content {
+		flex: 1;
+		padding: 5px;
+		overflow-y: auto;
+		background-color: #f9f9f9;
+	  }
+
+	  .chat-messages * {
+		display: flex;
+		flex-direction: column;
+		overflow-anchor: none;
+	  }
+	  .anchor {
+		overflow-anchor: auto;
+		height: 1px;
+	  }
+
+	  .chat-input {
+		display: flex;
+		padding: 5px;
+		border-top: 1px solid #ccc;
+	  }
+
+	  .chat-input input {
+		flex: 1;
+		margin-right: 5px;
+		resize: none;
+		overflow: auto;
+		height: 60px;
+		border-radius: 4px;
+		border: 1px solid #ccc;
+		padding: 0 5px;
+	  }
+
+	  .chat-input button {
+		border: none;
+		background-color: #0066ff;
+		color: white;
+		padding: 5px 10px;
+		font-weight: bold;
+		border-radius: 4px;
+		cursor: pointer;
+	  }
+
+	  .chat-input button:hover {
+		background-color: #0051cc;
+	  }
+
+	  .backlog-message,
+	  .user-message,
+	  .gpt-message {
+		font-family: Arial, sans-serif;
+		font-size: 14px;
+		margin-bottom: 5px;
+		line-height: 1.4;
+	  }
+
+	  .backlog-message {
+		font-family: Courier, monospace;
+		font-size: 14px;
+		color: #71797e;
+		margin-bottom: 5px;
+		margin-left: 10px;
+		white-space: pre-wrap;
+	  }
+
+	  .user-message {
+		font-family: Courier, monospace;
+		font-size: 14px;
+		color: #1a1a1a;
+		margin-bottom: 5px;
+		margin-left: 10px;
+		white-space: pre-wrap;
+	  }
+
+	  .gpt-message {
+		color: #666;
+		margin-left: 20px;
+	  }
+
+	  .resize-handle {
+		width: 100%;
+		height: 15px;
+		cursor: nwse-resize;
+		background: #f4f4f4;
+		border-top: 1px solid #ccc;
+		display: flex;
+		justify-content: right;
+		align-items: right;
+		font-size: 12px;
+		user-select: none;
+	  }
+
+	  .resize-handle i {
+		color: #71797e;
+		font-size: 16px;
+		transform: rotate(45deg);
+		margin: 0 4px 4px 0; /* Adjust these values to position the icon correctly */
+	  }
+
+	  .resize-indicator {
+		width: 70%;
+		height: 1px;
+		background-color: #ccc;
+		border-radius: 1px;
+	  }
+
+	  .hidden {
+		display: none !important;
+	  }
+
+	  .send-button {
+		  width: 100px;
+	  }
+	  .chat-input textarea {
+		flex: 1;
+		margin-right: 5px;
+		resize: none;
+		overflow: auto;
+		height: 40px;
+		border-radius: 4px;
+		border: 1px solid #ccc;
+		padding: 5px;
+	  }
+	</style>
+
+	<div id="chat-popup" class="chat-popup hidden">
+	  <div class="chat-header">
+		<h3>Chat with GPT</h3>
+		<button class="close-btn" onclick="closeChatPopup()">
+		  <i class="fas fa-window-close"></i>
+		</button>
+	  </div>
+	  <div class="chat-content">
+		<div class="chat-messages" id="chat-messages"></div>
+		<div id="anchor"></div>
+	  </div>
+	  <div class="chat-input">
+		<textarea
+		  id="chat-input-text"
+		  rows="3"
+		  placeholder="Type your prompt, note the hierarchical list above will be prefixed to your message so you may refer to it in your prompt."
+		></textarea>
+		<button class="send-button" onclick="submitChatMessage()">Send</button>
+	  </div>
+	  <div class="resize-handle"><i class="fas fa-arrows-alt"></i></div>
+	</div>
+
+	<script>
+
+
+	  setupPopSizeListener(800, 600, document.getElementById("chat-popup"));
+	  
+	  function get_node_discussion_prompt(node, _jm) {
+		const text_of_node = node.topic;
+		const hyphenated_list = createHyphenatedList(_jm.get_data().data);
+		var prompt = document.getElementById("discuss-node-prompt").value;
+		prompt = secureEvaluateTemplate(prompt, {
+		  hyphenated_list: hyphenated_list,
+		  text_of_node: text_of_node,
+		});
+		console.log(prompt);
+		return prompt;
+	  }
+
+	  function scrollToBottom() {
+		var anchor = document.getElementById("anchor");
+		anchor.scrollIntoView({ behavior: "smooth", block: "end" });
+	  }
+
+	  function observeChatMessages() {
+		const chatMessages = document.getElementById("chat-messages");
+		const observer = new MutationObserver(scrollToBottom);
+
+		observer.observe(chatMessages, {
+		  childList: true, // Observe changes to the children of chatMessages
+		  subtree: true, // Observe changes to the descendants of chatMessages
+		});
+	  }
+
+	  document.addEventListener("DOMContentLoaded", function () {
+		observeChatMessages();
+	  });
+
+	  async function discuss_node() {
+		var selected_node = _jm.get_selected_node(); // as parent of new node
+		if (!selected_node) {
+		  prompt_info("please select a node first.");
+		  return;
+		}
+
+		// Call get_children_suggestions function and wait for the response
+		const prompt = get_node_discussion_prompt(selected_node, _jm);
+		openChatPopup(selected_node, prompt, _jm);
+	  }
+	  let curNode = null;
+	  let prompt_prefix = "";
+	  async function openChatPopup(_curNode, prompt, _jm) {
+		curNode = _curNode;
+		backlog = "";
+		if (curNode.data.hasOwnProperty("chatlog")) {
+		  backlog = curNode.data["chatlog"];
+		}
+		const chatPopup = document.getElementById("chat-popup");
+		chatPopup.classList.remove("hidden");
+
+		// Clear existing chat messages
+		const chatMessages = document.getElementById("chat-messages");
+		chatMessages.innerHTML = "";
+		const cur_topic = curNode.topic;
+		const hyphenated_list = createHyphenatedList(_jm.get_data().data);
+		var prompt_prefix_tmpl = document.getElementById("prefix-prompt").value;
+		prompt_prefix = secureEvaluateTemplate(prompt_prefix_tmpl, {
+		  hyphenated_list: hyphenated_list,
+		  cur_topic: cur_topic,
+		});
+
+		// Display backlog
+		if (backlog != "") {
+		  displayChatMessage(
+			"backlog-message",
+			"------backlog-----\n" + backlog + "\n----end backlog---"
+		  );
+		  displayChatMessage("user-message", "user-message:\n" + prompt_prefix);
+		} else {
+		  // Display prompt
+		  displayChatMessage("user-message", "user-message:\n" + prompt);
+
+		  // Send prompt to GPT and display response
+		  displayChatMessage(
+			"gpt-message",
+			"..prompt sent to GPT api, waiting for response.."
+		  );
+		  const lastMessage = document.getElementById("chat-messages").lastChild;
+		  const response = await chatGPTRequest(prompt, curNode);
+		  lastMessage.textContent = "gpt-message:\n" + response;
+		}
+		scrollToBottom();
+	  }
+
+	  function closeChatPopup() {
+		const chatPopup = document.getElementById("chat-popup");
+		chatPopup.classList.add("hidden");
+	  }
+
+	  function displayChatMessage(sender, message) {
+		const chatMessages = document.getElementById("chat-messages");
+		const messageDiv = document.createElement("div");
+		messageDiv.className = sender;
+		messageDiv.innerHTML = message; // Use innerHTML instead of textContent
+		chatMessages.appendChild(messageDiv);
+		scrollToBottom();
+	  }
+	  }
+
+	  // Draggable
+	  const chatHeader = document.querySelector(".chat-header");
+	  chatHeader.addEventListener("mousedown", dragMouseDown);
+
+	  function dragMouseDown(e) {
+		e.preventDefault();
+
+		const chatPopup = document.getElementById("chat-popup");
+		const offsetX = e.clientX - chatPopup.getBoundingClientRect().left;
+		const offsetY = e.clientY - chatPopup.getBoundingClientRect().top;
+
+		document.onmousemove = (e) => {
+		  chatPopup.style.left = `${e.clientX - offsetX}px`;
+		  chatPopup.style.top = `${e.clientY - offsetY}px`;
+		};
+
+		document.onmouseup = () => {
+		  document.onmousemove = null;
+		  document.onmouseup = null;
+		};
+	  }
+
+	  // Resizable
+	  const resizeHandle = document.querySelector(".resize-handle");
+	  resizeHandle.addEventListener("mousedown", resizeMouseDown);
+
+	  function resizeMouseDown(e) {
+		e.preventDefault();
+
+		const chatPopup = document.getElementById("chat-popup");
+		const initialWidth = chatPopup.clientWidth;
+		const initialHeight = chatPopup.clientHeight;
+		const initialX = e.clientX;
+		const initialY = e.clientY;
+
+		document.onmousemove = (e) => {
+		  const newX = e.clientX;
+		  const newY = e.clientY;
+
+		  chatPopup.style.width = `${initialWidth + (newX - initialX)}px`;
+		  chatPopup.style.height = `${initialHeight + (newY - initialY)}px`;
+		};
+
+		document.onmouseup = () => {
+		  document.onmousemove = null;
+		  document.onmouseup = null;
+		};
+	  }
+
+	  // Multiline input field and ".." waiting indicator
+	  async function submitChatMessage() {
+		const inputText = document.getElementById("chat-input-text");
+		const message = inputText.value;
+		inputText.value = "";
+
+		if (message.trim() === "") return;
+
+		displayChatMessage("user-message", message);
+		displayChatMessage("gpt-message", "..thinking..");
+		const lastMessage = document.getElementById("chat-messages").lastChild;
+		const response = await chatGPTRequest(prompt_prefix + message, curNode);
+		lastMessage.textContent = "gpt-message:\n" + response;
+	  }
+	</script>
+
+  </body>
+</html>
