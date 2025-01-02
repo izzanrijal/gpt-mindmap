@@ -140,7 +140,9 @@
           <button class="icon-button" onclick="openHelpPopup();" title="Help">
             <i class="fas fa-info-circle"></i>
           </button>
-
+		<button class="icon-button" onclick="toggleNodeColor();" title="Toggle Node Color">
+			<i class="fas fa-palette"></i>
+		</button>
           <!-- =========================
                NEW "STORE TO SERVER" 
           ========================== -->
@@ -802,7 +804,31 @@ async function add_node2() {
 
 
     </script>
+<script>
+  function toggleNodeColor() {
+    const node = _jm.get_selected_node();
+    if (!node) {
+      prompt_info("Please select a node first!");
+      return;
+    }
 
+    const toggleColor = "#FFA533"; // The color to toggle to (e.g., Orange)
+    
+    // Check if the node already has the toggleColor
+    const currentColor = node.data.style && node.data.style.background_color;
+    
+    if (currentColor === toggleColor) {
+      // Revert to original color by removing custom color
+      _jm.set_node_color(node.id, null, null);
+    } else {
+      // Set the node to the toggleColor
+      _jm.set_node_color(node.id, toggleColor, null);
+    }
+
+    // Save the changes
+    autoSaveData();
+  }
+</script>
     <!-- UndoRedo Manager, popups, chat, settings, etc. EXACT same snippet as your original code for help, custom alert, etc. -->
     <script>
       class UndoRedoManager {
